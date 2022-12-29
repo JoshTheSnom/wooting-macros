@@ -35,6 +35,7 @@ rayon = "1.6.1"
 hueclient = "0.4.2"
 lifx-rs = "0.1.29"
 lifx-api-server = "0.1.14"
+hostname = "0.3.1"
 
 
 [target.'cfg(any(target_os = "windows", target_os = "linux"))'.dependencies]
