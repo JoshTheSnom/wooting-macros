@@ -1,7 +1,7 @@
 use crate::MacroData;
+use hostname;
 use std::fs::File;
 use std::path::PathBuf;
-use hostname;
 
 use log::{error, info};
 

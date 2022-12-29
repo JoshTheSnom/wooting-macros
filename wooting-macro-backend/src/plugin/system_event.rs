@@ -76,6 +76,7 @@ impl SystemAction {
                         .await;
                 }
             },
+
             SystemAction::Brightness { action } => match action {
                 MonitorBrightnessAction::SetAll { level } => {
                     #[cfg(any(target_os = "windows", target_os = "linux"))]

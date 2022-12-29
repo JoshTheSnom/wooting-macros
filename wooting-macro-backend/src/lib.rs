@@ -378,7 +378,7 @@ impl MacroBackend {
         });
 
         //==============TESTING GROUND======================
-        plugin::smart_lights::phillips_first_time_setup(&self);
+        plugin::smart_lights::phillips_first_time_setup(&self).await;
 
         //==============TESTING GROUND======================
         //==================================================
