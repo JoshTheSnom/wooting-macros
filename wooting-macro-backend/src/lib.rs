@@ -38,7 +38,7 @@ use crate::plugin::key_press;
 use crate::plugin::mouse;
 #[allow(unused_imports)]
 use crate::plugin::obs;
-use crate::plugin::phillips_hue;
+use crate::plugin::smart_lights;
 use crate::plugin::system_event;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -64,7 +64,7 @@ pub enum ActionEventType {
     //Paste, Run commandline program (terminal run? standard user?), audio, open file-manager, workspace switch left, right,
     //IDEA: System event - notification
     PhillipsHueEventAction {
-        data: phillips_hue::PhillipsHueStatus,
+        data: smart_lights::PhillipsHueStatus,
     },
     //IDEA: Phillips hue notification
     OBSEventAction {},
