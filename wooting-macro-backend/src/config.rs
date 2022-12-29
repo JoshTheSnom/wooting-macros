@@ -1,6 +1,7 @@
 use crate::MacroData;
 use std::fs::File;
 use std::path::PathBuf;
+use hostname;
 
 use log::{error, info};
 
@@ -95,6 +96,8 @@ impl Default for ApplicationConfig {
             minimize_at_launch: false,
             theme: "light".to_string(),
             minimize_to_tray: true,
+            global_ordered_key_check: true,
+            computer_hostname: hostname::get().unwrap().to_str().unwrap().to_string(),
         }
     }
 }
@@ -121,4 +124,6 @@ pub struct ApplicationConfig {
     pub minimize_at_launch: bool,
     pub theme: String,
     pub minimize_to_tray: bool,
+    pub global_ordered_key_check: bool,
+    pub computer_hostname: String,
 }

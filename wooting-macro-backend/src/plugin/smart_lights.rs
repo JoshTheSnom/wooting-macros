@@ -20,12 +20,15 @@ pub trait LightActions {
     fn first_time_setup(){}
 }
 
-pub fn phillips_first_time_setup() {
-    //
+pub async fn phillips_first_time_setup(state: &super::super::MacroBackend) {
+    //! TODO: we need to inform the user of this and have them press the button on the bridge.
 
     let bridge = hueclient::Bridge::discover_required()
-    .register_user(dbg!(hostname::get().unwrap()).to_str().unwrap()) // Press the bridge before running this
+    .register_user("test") // Press the bridge before running this
     .unwrap();
+    
+    //println!("the username was {}", state.read().await); // handy for later
+    
     println!("the username was {}", bridge.username); // handy for later
 }
 
