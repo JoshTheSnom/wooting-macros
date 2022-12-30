@@ -3,12 +3,15 @@ use hueclient;
 use lifx_api_server;
 use lifx_rs;
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Hash, Eq)]
+#[derive(Debug, Clone)]
 /// Phillips hue lights. Not done yet.
 pub struct PhillipsHueStatus{
-    pub bridge: hueclient::Bridge,
+    pub bridge: Vec<hueclient::Bridge>,
 }
-pub struct LifxStatus{}
+
+pub struct LifxStatus{
+    
+}
 
 pub trait LightActions {
     fn list_lights() {}

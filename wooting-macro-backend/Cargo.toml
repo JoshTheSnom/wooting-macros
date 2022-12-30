@@ -32,7 +32,7 @@ anyhow = "1.0.66"
 log = "0.4.17"
 env_logger = "0.10.0"
 rayon = "1.6.1"
-hueclient = "0.4.2"
+hueclient = {version = "0.4.2"}
 lifx-rs = "0.1.29"
 lifx-api-server = "0.1.14"
 hostname = "0.3.1"

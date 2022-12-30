@@ -64,7 +64,6 @@ pub enum ActionEventType {
     //Paste, Run commandline program (terminal run? standard user?), audio, open file-manager, workspace switch left, right,
     //IDEA: System event - notification
     PhillipsHueEventAction {
-        data: smart_lights::PhillipsHueStatus,
     },
     //IDEA: Phillips hue notification
     OBSEventAction {},
