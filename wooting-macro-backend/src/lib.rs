@@ -559,7 +559,9 @@ impl MacroBackend {
                                     Some(event)
                                 }
                                 rdev::EventType::MouseMove { .. } => Some(event),
-                                rdev::EventType::Wheel { .. } => Some(event),
+                                rdev::EventType::Wheel { delta_y, .. } => {
+                                    debug!("Wheel moved: {:?}", delta_y);
+                                    Some(event)},
                             }
                         } else {
                             debug!(
