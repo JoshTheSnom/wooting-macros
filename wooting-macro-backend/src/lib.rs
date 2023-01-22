@@ -584,6 +584,9 @@ impl MacroBackend {
                                     debug!("Wheel moved: {:?}", delta_y);
                                     //let key_to_push = key;
 
+                                    //if delta is >0 then key is 0xf1 else 0xf2
+
+
                                     let key_to_push = if delta_y > 0 {
                                         HID_TO_EVENT_TYPE.get(&0xf1).unwrap()
                                     } else {
@@ -591,7 +594,8 @@ impl MacroBackend {
                                     };
 
                                     let mut keys_pressed = keys_pressed.blocking_write();
-
+                                    
+                                    // TODO: Maybe this has to be more abstract with triggers pushed instead of just one key.
                                     keys_pressed.push(key_to_push);
 
                                     let pressed_keys_copy_converted: Vec<u32> = keys_pressed
