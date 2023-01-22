@@ -975,8 +975,8 @@ export class Hid {
   }
   static get SCROLLUP(): HidInfo {
     return {
-      HIDcode: 231,
-      category: HIDCategory.Modifier,
+      HIDcode: 241,
+      category: HIDCategory.Alphanumeric,
       displayString: 'Mouse scroll up',
       webKeyId: 'ScrollUp',
       colSpan: 4
@@ -984,8 +984,8 @@ export class Hid {
   }
   static get SCROLLDOWN(): HidInfo {
     return {
-      HIDcode: 231,
-      category: HIDCategory.Modifier,
+      HIDcode: 242,
+      category: HIDCategory.Alphanumeric,
       displayString: 'Mouse scroll down',
       webKeyId: 'ScrollDown',
       colSpan: 4

@@ -6,8 +6,6 @@ use rdev::{Button, EventType, Key};
 
 use crate::plugin::mouse::{MouseAction, MouseButton};
 
-
-
 lazy_static! {
 #[derive(Debug, PartialEq, Hash, std::cmp::Eq)]
 pub static ref BUTTON_TO_HID: HashMap<Button, u32> = {
@@ -20,23 +18,17 @@ pub static ref BUTTON_TO_HID: HashMap<Button, u32> = {
         scancode
 };}
 
+// //TODO: I dont like this approach but maybe it will be required
+// lazy_static! {
+//     #[derive(Debug, PartialEq, Hash)]
+//     pub static ref EVENT_TYPE_TO_HID: HashMap<EventType, u32> = {
+//         let mut scancode: HashMap<EventType, u32> = HashMap::new();
+//             scancode.insert(EventType::Wheel { delta_x: 1, delta_y: 0 }, 0xf1); //WHEELUP
+//             scancode.insert(EventType::Wheel { delta_x: -1, delta_y: 0 }, 0xf2); //WHEELDOWN
 
-
-
-
-
-
-//TODO: I dont like this approach but maybe it will be required
-lazy_static! {
-    #[derive(Debug, PartialEq, Hash)]
-    pub static ref EVENT_TYPE_TO_HID: HashMap<EventType, u32> = {
-        let mut scancode: HashMap<EventType, u32> = HashMap::new();
-            scancode.insert(EventType::Wheel { delta_x: 1, delta_y: 0 }, 0xf1); //WHEELUP
-            scancode.insert(EventType::Wheel { delta_x: -1, delta_y: 0 }, 0xf2); //WHEELDOWN
-            
-            scancode
-    };
-}
+//             scancode
+//     };
+// }
 
 lazy_static! {
     #[derive(Debug, PartialEq, Hash, std::cmp::Eq)]
