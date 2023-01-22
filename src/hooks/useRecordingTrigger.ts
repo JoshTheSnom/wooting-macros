@@ -91,6 +91,7 @@ export default function useRecordingTrigger(
 
     window.addEventListener('keydown', addKeypress, true)
     window.addEventListener('mousedown', addMousepress, true)
+    window.addEventListener('wheel', addKeypress, { passive: false, capture : true })
     invoke<void>('control_grabbing', { frontendBool: false }).catch((e) => {
       console.error(e)
       toast({
@@ -106,6 +107,7 @@ export default function useRecordingTrigger(
     return () => {
       window.removeEventListener('keydown', addKeypress, true)
       window.removeEventListener('mousedown', addMousepress, true)
+      window.addEventListener('wheel', addKeypress, { passive: false, capture : true })
       invoke<void>('control_grabbing', { frontendBool: true }).catch((e) => {
         console.error(e)
         toast({

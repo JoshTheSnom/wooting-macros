@@ -1,4 +1,5 @@
-import { HIDCategory } from './enums'
+import { HIDCategory, MouseButton } from './enums'
+import { MouseInputInfo, MouseInput } from './MouseMap'
 
 export interface HidInfo {
   HIDcode: number
@@ -979,7 +980,7 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'Mouse scroll up',
       webKeyId: 'ScrollUp',
-      colSpan: 4
+      colSpan: 2
     }
   }
   static get SCROLLDOWN(): HidInfo {
@@ -988,7 +989,7 @@ export class Hid {
       category: HIDCategory.Alphanumeric,
       displayString: 'Mouse scroll down',
       webKeyId: 'ScrollDown',
-      colSpan: 4
+      colSpan: 2
     }
   }
 

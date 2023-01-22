@@ -133,6 +133,7 @@ export default function useRecordingSequence(
     window.addEventListener('mousedown', addMousepress, false)
     window.addEventListener('keyup', addKeypress, false)
     window.addEventListener('mouseup', addMousepress, false)
+    window.addEventListener('wheel', addKeypress, { passive: false, capture : false })
     invoke<void>('control_grabbing', { frontendBool: false }).catch((e) => {
       console.error(e)
     })
@@ -142,6 +143,7 @@ export default function useRecordingSequence(
       window.removeEventListener('mousedown', addMousepress, false)
       window.removeEventListener('keyup', addKeypress, false)
       window.removeEventListener('mouseup', addMousepress, false)
+      window.addEventListener('wheel', addKeypress, { passive: false, capture : false })
       invoke<void>('control_grabbing', { frontendBool: true }).catch((e) => {
         console.error(e)
       })
