@@ -73,6 +73,7 @@ pub enum ActionEventType {
     MouseEventAction {
         data: mouse::MouseAction,
     },
+    
     //IDEA: Sound effects? Soundboards?
     //IDEA: Sending a message through online webapi (twitch)
     DelayEventAction {
@@ -85,13 +86,16 @@ pub enum ActionEventType {
 /// This enum is the registry for all incoming actions that can be analyzed for macro execution.
 ///
 /// ! **UNIMPLEMENTED** - Allow while other keys has not been implemented yet. This is WIP already.
+/// 
+/// //TODO: This should be a vector of trigger event type and then scalable.
 pub enum TriggerEventType {
     KeyPressEvent {
         data: Vec<u32>,
         allow_while_other_keys: bool,
     },
     MouseEvent {
-        data: mouse::MouseButton,
+        //TODO: Make this an enum?
+        data: mouse::MouseAction,
     },
     //IDEA: computer time (have timezone support?)
     //IDEA: computer temperature?
@@ -212,6 +216,7 @@ impl MacroData {
             if collections.active {
                 for macros in &collections.macros {
                     if macros.active {
+                        //TODO: Change this to a vector?
                         match &macros.trigger {
                             TriggerEventType::KeyPressEvent { data, .. } => {
                                 //TODO: optimize using references
@@ -561,7 +566,8 @@ impl MacroBackend {
                                 rdev::EventType::MouseMove { .. } => Some(event),
                                 rdev::EventType::Wheel { delta_y, .. } => {
                                     debug!("Wheel moved: {:?}", delta_y);
-                                    Some(event)},
+                                    Some(event)
+                                }
                             }
                         } else {
                             debug!(
@@ -596,7 +602,6 @@ impl Default for MacroBackend {
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {

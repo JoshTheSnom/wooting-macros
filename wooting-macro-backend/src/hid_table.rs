@@ -2,9 +2,10 @@ use std::collections::HashMap;
 use std::hash::Hash;
 
 use lazy_static::lazy_static;
-use rdev::{Button, Key, EventType};
+use rdev::{Button, EventType, Key};
 
 use crate::plugin::mouse::{MouseAction, MouseButton};
+
 
 
 lazy_static! {
@@ -19,18 +20,23 @@ pub static ref BUTTON_TO_HID: HashMap<Button, u32> = {
         scancode
 };}
 
-//TODO: I dont like this approach.
+
+
+
+
+
+
+//TODO: I dont like this approach but maybe it will be required
 lazy_static! {
     #[derive(Debug, PartialEq, Hash)]
     pub static ref EVENT_TYPE_TO_HID: HashMap<EventType, u32> = {
         let mut scancode: HashMap<EventType, u32> = HashMap::new();
-        scancode.insert(EventType::Wheel { delta_x: 1, delta_y: 0 }, 0xf1); //WHEELUP
-        scancode.insert(EventType::Wheel { delta_x: -1, delta_y: 0 }, 0xf2); //WHEELDOWN
+            scancode.insert(EventType::Wheel { delta_x: 1, delta_y: 0 }, 0xf1); //WHEELUP
+            scancode.insert(EventType::Wheel { delta_x: -1, delta_y: 0 }, 0xf2); //WHEELDOWN
+            
             scancode
-
     };
 }
-
 
 lazy_static! {
     #[derive(Debug, PartialEq, Hash, std::cmp::Eq)]
@@ -457,7 +463,7 @@ pub static ref SCANCODE_TO_HID: HashMap<Key, u32> = {
         scancode.insert(Key::Alt, 0xe6); //ALT_RIGHT
         scancode.insert(Key::MetaRight, 0xe7); //META_RIGHT
 
-        
+
         scancode.insert(Key::MetaRight, 0xe9); //Scroll down
 
     scancode

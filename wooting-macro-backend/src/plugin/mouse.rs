@@ -17,6 +17,11 @@ pub enum MouseAction {
     Move { x: i32, y: i32 },
 }
 
+pub enum MouseTrigger {
+    Press { data: MousePressAction },
+    ScrollWheel { dir_x: i32, dir_y: i32 },
+}
+
 #[derive(
     Debug, Clone, serde_repr::Serialize_repr, serde_repr::Deserialize_repr, PartialEq, Hash, Eq,
 )]
