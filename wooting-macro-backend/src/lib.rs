@@ -73,7 +73,6 @@ pub enum ActionEventType {
     MouseEventAction {
         data: mouse::MouseAction,
     },
-    
     //IDEA: Sound effects? Soundboards?
     //IDEA: Sending a message through online webapi (twitch)
     DelayEventAction {
@@ -86,16 +85,13 @@ pub enum ActionEventType {
 /// This enum is the registry for all incoming actions that can be analyzed for macro execution.
 ///
 /// ! **UNIMPLEMENTED** - Allow while other keys has not been implemented yet. This is WIP already.
-/// 
-/// //TODO: This should be a vector of trigger event type and then scalable.
 pub enum TriggerEventType {
     KeyPressEvent {
         data: Vec<u32>,
         allow_while_other_keys: bool,
     },
     MouseEvent {
-        //TODO: Make this an enum?
-        data: mouse::MouseAction,
+        data: mouse::MouseButton,
     },
     //IDEA: computer time (have timezone support?)
     //IDEA: computer temperature?
@@ -216,7 +212,6 @@ impl MacroData {
             if collections.active {
                 for macros in &collections.macros {
                     if macros.active {
-                        //TODO: Change this to a vector?
                         match &macros.trigger {
                             TriggerEventType::KeyPressEvent { data, .. } => {
                                 //TODO: optimize using references
@@ -302,6 +297,15 @@ fn keypress_executor_sender(mut rchan_execute: Receiver<rdev::EventType>) {
     }
 }
 
+async fn lift_keys(pressed_events: Vec<u32>, channel_sender: Sender<rdev::EventType>) {
+    for x in pressed_events {
+        channel_sender
+            .send(rdev::EventType::KeyRelease(SCANCODE_TO_RDEV[&x]))
+            .await
+            .unwrap();
+    }
+}
+
 /// A more efficient way using hashtable to check whether the trigger keys match the macro.
 ///
 /// `pressed_events` - the keys pressed in HID format (use the conversion HID hashtable to get the number).
@@ -332,6 +336,12 @@ fn check_macro_execution_efficiently(
 
                             let channel_clone = channel_sender.clone();
                             let macro_clone = macros.clone();
+                            let channel_clone2 = channel_sender.clone();
+                            let pressed_events2 = pressed_events.clone();
+                            task::spawn(async move {
+
+                                lift_keys(pressed_events2, channel_clone2).await;
+                            });
 
                             task::spawn(async move {
                                 execute_macro(macro_clone, channel_clone).await;
@@ -352,8 +362,15 @@ fn check_macro_execution_efficiently(
 
                             let channel_clone = channel_sender.clone();
                             let macro_clone = macros.clone();
+                            let channel_clone2 = channel_sender.clone();
+                            let pressed_events2 = pressed_events.clone();
+                            task::spawn(async move {
+
+                                lift_keys(pressed_events2, channel_clone2).await;
+                            });
 
                             task::spawn(async move {
+                                tokio::time::sleep(time::Duration::from_millis(3)).await;
                                 execute_macro(macro_clone, channel_clone).await;
                             });
                             output = true;
@@ -485,7 +502,6 @@ impl MacroBackend {
 
                                     let trigger_list = inner_triggers.blocking_read().clone();
 
-                                    debug!("TRIGGER LIST: {:#?}", trigger_list);
 
                                     let check_these_macros = match trigger_list.get(&first_key) {
                                         None => {
@@ -564,10 +580,7 @@ impl MacroBackend {
                                     Some(event)
                                 }
                                 rdev::EventType::MouseMove { .. } => Some(event),
-                                rdev::EventType::Wheel { delta_y, .. } => {
-                                    debug!("Wheel moved: {:?}", delta_y);
-                                    Some(event)
-                                }
+                                rdev::EventType::Wheel { .. } => Some(event),
                             }
                         } else {
                             debug!(
@@ -602,6 +615,7 @@ impl Default for MacroBackend {
         }
     }
 }
+
 
 #[cfg(test)]
 mod tests {
