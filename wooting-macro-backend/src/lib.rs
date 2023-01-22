@@ -580,7 +580,88 @@ impl MacroBackend {
                                     Some(event)
                                 }
                                 rdev::EventType::MouseMove { .. } => Some(event),
-                                rdev::EventType::Wheel { .. } => Some(event),
+                                rdev::EventType::Wheel {  delta_y, .. } => {
+                                    debug!("Wheel moved: {:?}", delta_y);
+                                    //let key_to_push = key;
+
+                                    let key_to_push = if delta_y > 0 {
+                                        HID_TO_EVENT_TYPE.get(&0xf1).unwrap()
+                                    } else {
+                                        HID_TO_EVENT_TYPE.get(&0xf2).unwrap()
+                                    };
+
+                                    let mut keys_pressed = keys_pressed.blocking_write();
+
+                                    keys_pressed.push(key_to_push);
+
+                                    let pressed_keys_copy_converted: Vec<u32> = keys_pressed
+                                        .iter()
+                                        .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
+                                        .into_iter()
+                                        .unique()
+                                        .collect();
+                                    debug!(
+                                        "Pressed Keys CONVERTED TO HID:  {:?}",
+                                        pressed_keys_copy_converted
+                                    );
+                                    debug!(
+                                        "Pressed Keys CONVERTED TO RDEV: {:?}",
+                                        pressed_keys_copy_converted
+                                            .par_iter()
+                                            .map(|x| *SCANCODE_TO_RDEV
+                                                .get(x)
+                                                .unwrap_or(&rdev::Key::Unknown(0)))
+                                            .collect::<Vec<rdev::Key>>()
+                                    );
+
+                                    debug!(
+                                        "Pressed Keys: {:?}",
+                                        pressed_keys_copy_converted
+                                            .par_iter()
+                                            .map(|x| *SCANCODE_TO_RDEV
+                                                .get(x)
+                                                .unwrap_or(&rdev::Key::Unknown(0)))
+                                            .collect::<Vec<rdev::Key>>()
+                                    );
+
+                                    let first_key: u32 = match pressed_keys_copy_converted.first() {
+                                        None => 0,
+                                        Some(data_first) => *data_first,
+                                    };
+
+                                    let trigger_list = inner_triggers.blocking_read().clone();
+
+
+                                    let check_these_macros = match trigger_list.get(&first_key) {
+                                        None => {
+                                            vec![]
+                                        }
+                                        Some(data_found) => data_found.to_vec(),
+                                    };
+
+                                    // ? up the pressed keys here immidiately?
+
+                                    let should_grab = {
+                                        if !check_these_macros.is_empty() {
+                                            let channel_copy_send = schan_execute.clone();
+                                            check_macro_execution_efficiently(
+                                                pressed_keys_copy_converted,
+                                                check_these_macros,
+                                                channel_copy_send,
+                                            )
+                                        } else {
+                                            false
+                                        }
+                                    };
+
+                                    if should_grab {
+                                        None
+                                    } else {
+                                        Some(event)
+                                    }
+                                    Some(event)
+                                
+                                },
                             }
                         } else {
                             debug!(

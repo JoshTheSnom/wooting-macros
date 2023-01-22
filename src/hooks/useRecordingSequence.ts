@@ -78,6 +78,39 @@ export default function useRecordingSequence(
     [eventType, item, onItemChanged, prevTimestamp]
   )
 
+  const addScroll = useCallback(
+    (event: WheelEvent) => {
+      event.preventDefault()
+      event.stopPropagation()
+      
+      // if (event.repeat) {
+      //   return
+      // }
+
+      const HIDcode = (event.deltaY > 0 ? webCodeHIDLookup.get('ScrollDown')?.HIDcode : webCodeHIDLookup.get('ScrollUp')?.HIDcode) 
+      
+      // webCodeHIDLookup.get(event.deltaY)?.HIDcode
+      if (HIDcode === undefined) {
+        return
+      }
+      const timeDiff = Math.round(event.timeStamp - prevTimestamp)
+
+      setPrevTimestamp(event.timeStamp)
+      setPrevEventType(eventType)
+      setPrevItem(item)
+
+      setEventType('Up')
+      const keydown: Keypress = {
+        keypress: HIDcode,
+        press_duration: 0,
+        keytype: KeyType[KeyType.DownUp]
+      }
+      setItem(keydown)
+      onItemChanged(keydown, item, timeDiff, false)
+    },
+    [eventType, item, onItemChanged, prevTimestamp]
+  )
+
   const addMousepress = useCallback(
     (event: MouseEvent) => {
       event.preventDefault()
@@ -133,7 +166,7 @@ export default function useRecordingSequence(
     window.addEventListener('mousedown', addMousepress, false)
     window.addEventListener('keyup', addKeypress, false)
     window.addEventListener('mouseup', addMousepress, false)
-    window.addEventListener('wheel', addKeypress, { passive: false, capture : false })
+    window.addEventListener('wheel', addScroll, { passive: false, capture : false })
     invoke<void>('control_grabbing', { frontendBool: false }).catch((e) => {
       console.error(e)
     })
@@ -143,7 +176,7 @@ export default function useRecordingSequence(
       window.removeEventListener('mousedown', addMousepress, false)
       window.removeEventListener('keyup', addKeypress, false)
       window.removeEventListener('mouseup', addMousepress, false)
-      window.addEventListener('wheel', addKeypress, { passive: false, capture : false })
+      window.addEventListener('wheel', addScroll, { passive: false, capture : false })
       invoke<void>('control_grabbing', { frontendBool: true }).catch((e) => {
         console.error(e)
       })

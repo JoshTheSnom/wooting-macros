@@ -59,6 +59,31 @@ export default function useRecordingTrigger(
     },
     [stopRecording]
   )
+  const addScroll = useCallback(
+    (event: WheelEvent) => {
+      event.preventDefault()
+      event.stopPropagation()
+
+      const HIDcode = (event.deltaY > 0 ? webCodeHIDLookup.get('ScrollDown')?.HIDcode : webCodeHIDLookup.get('ScrollUp')?.HIDcode) 
+      if (HIDcode === undefined) {
+        return
+      }
+
+      setItems((items) => {
+        let newItems: number[] = []
+        if (items.filter((item) => item === HIDcode).length > 0) {
+          // Prevent duplicate keys
+          newItems = items
+        } else {
+          newItems = [...items, HIDcode]
+        }
+        return newItems
+      })
+
+      if (!checkIfModifierKey(HIDcode)) stopRecording()
+    },
+    [stopRecording]
+  )
 
   const addMousepress = useCallback(
     (event: MouseEvent) => {
@@ -91,7 +116,7 @@ export default function useRecordingTrigger(
 
     window.addEventListener('keydown', addKeypress, true)
     window.addEventListener('mousedown', addMousepress, true)
-    window.addEventListener('wheel', addKeypress, { passive: false, capture : true })
+    window.addEventListener('wheel', addScroll, { passive: false, capture : true })
     invoke<void>('control_grabbing', { frontendBool: false }).catch((e) => {
       console.error(e)
       toast({
@@ -107,7 +132,7 @@ export default function useRecordingTrigger(
     return () => {
       window.removeEventListener('keydown', addKeypress, true)
       window.removeEventListener('mousedown', addMousepress, true)
-      window.addEventListener('wheel', addKeypress, { passive: false, capture : true })
+      window.addEventListener('wheel', addScroll, { passive: false, capture : true })
       invoke<void>('control_grabbing', { frontendBool: true }).catch((e) => {
         console.error(e)
         toast({
