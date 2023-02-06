@@ -6,7 +6,6 @@ use rayon::prelude::*;
 
 use log::*;
 
-
 use itertools::Itertools;
 
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -308,8 +307,8 @@ fn check_macro_execution_efficiently(
 ) -> bool {
     let trigger_overview_print = trigger_overview.clone();
 
-    debug!("Got data: {:?}", trigger_overview_print);
-    debug!("Got keys: {:?}", pressed_events);
+    trace!("Got data: {:?}", trigger_overview_print);
+    trace!("Got keys: {:?}", pressed_events);
 
     let mut output = false;
     for macros in &trigger_overview {
@@ -319,8 +318,6 @@ fn check_macro_execution_efficiently(
                     1 => {
                         if pressed_events == *data {
                             debug!("MATCHED MACRO singlekey: {:#?}", pressed_events);
-
-                            // ? Kinda works for now but needs to be improved. Disabled for now as its more of a regression than a fix.
 
                             let channel_clone = channel_sender.clone();
                             let macro_clone = macros.clone();
@@ -357,7 +354,7 @@ fn check_macro_execution_efficiently(
             TriggerEventType::MouseEvent { data } => {
                 let event_to_check: Vec<u32> = vec![data.into()];
 
-                debug!(
+                trace!(
                     "CheckMacroExec: Converted mouse buttons to vec<u32>\n {:#?}",
                     event_to_check
                 );
@@ -379,12 +376,10 @@ fn check_macro_execution_efficiently(
 }
 
 impl MacroBackend {
-    
     /// Creates the data directory if not present in %appdata% (only in release build).
     pub fn generate_directories() {
-        
         #[cfg(not(debug_assertions))]
-        match std::fs::remove_file(config::LogFileName::file_name()){
+        match std::fs::remove_file(config::LogFileName::file_name()) {
             Ok(_) => info!("removed old log file"),
             Err(error) => error!("Couldnt remove old log file!: {}", error),
         }
@@ -433,7 +428,6 @@ impl MacroBackend {
 
         let _grabber = task::spawn_blocking(move || {
             let keys_pressed: Arc<RwLock<Vec<rdev::Key>>> = Arc::new(RwLock::new(vec![]));
-            let buttons_pressed: Arc<RwLock<Vec<rdev::Button>>> = Arc::new(RwLock::new(vec![]));
 
             rdev::grab(move |event: rdev::Event| {
                 if inner_is_listening.load(Ordering::Relaxed) {
