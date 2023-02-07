@@ -471,11 +471,13 @@ impl MacroBackend {
                                 //if the LMK is released, stop recording
 
                                 //if LMK is NOT released, do everything else below this
-
-                                //if there is a key pressed key in the collection, do the thing below
-                                //if a key is released, change the last matching key to a full press, reset timer (if it exists, otherwise add it to the collection as a released key)
+                                
+                                //if a key is released, add it to the collection as a released key
 
                                 //if a key is pressed, add it to the collection as a pressed key
+
+
+                                //maybe make this into a function instead?
                                 
                             }
 
