@@ -427,7 +427,9 @@ impl MacroBackend {
         // Hardcoded LMK and recording modifier keys for now
         let lmk: rdev::Key = rdev::Key::Kp5;
         let recording_modifier: rdev::Key = rdev::Key::ControlRight;
+        // Creating a new collection for LMK
         let lmk_collection: Collection = Collection {name: "LMK".to_string(), icon: ":sparkles:".to_string(), macros: vec![], active: true, temp: true};
+        // Creating a recordeing boolean (in a very complicated way)
         let mut lmk_recording: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
     
         let _grabber = task::spawn_blocking(move || {
@@ -462,9 +464,26 @@ impl MacroBackend {
                                 lmk_recording.store(true, Ordering::Relaxed); //"syntactic sugar"
                         
                             }
-                            if lmk_recording.load(Ordering::Relaxed) == true {
-                                //record
-                            }                            
+                            if lmk_recording.load(Ordering::Relaxed) == true { //record
+
+                                //if a timer is not running, start a timer
+
+                                //if the LMK is released, stop recording
+
+                                //if LMK is NOT released, do everything else below this
+
+                                //if there is a key pressed key in the collection, do the thing below
+                                //if a key is released, change the last matching key to a full press, reset timer (if it exists, otherwise add it to the collection as a released key)
+
+                                //if a key is pressed, add it to the collection as a pressed key
+                                
+                            }
+
+                            //if the LMK is pressed and not recording, execute the macro
+                            if lmk_recording.load(Ordering::Relaxed) == false && keys_pressed.blocking_read().iter().any(|x|*x==lmk) {
+                                debug!("LMK PRESSED, EXECUTING MACRO");
+                                
+                            }
             
 
                             debug!(
