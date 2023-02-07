@@ -194,6 +194,7 @@ impl Default for MacroData {
                 icon: ":smile:".to_string(),
                 macros: vec![],
                 active: true,
+                temp: false,
             }],
         }
     }
@@ -250,6 +251,7 @@ pub struct Collection {
     pub icon: String,
     pub macros: Vec<Macro>,
     pub active: bool,
+    pub temp: bool,
 }
 
 /// Executes a given macro (according to its type).
@@ -422,6 +424,12 @@ impl MacroBackend {
             keypress_executor_sender(rchan_execute);
         });
 
+        // Hardcoded LMK and recording modifier keys for now
+        let lmk: rdev::Key = rdev::Key::Kp5;
+        let recording_modifier: rdev::Key = rdev::Key::ControlRight;
+        let lmk_collection: Collection = Collection {name: "LMK".to_string(), icon: ":sparkles:".to_string(), macros: vec![], active: true, temp: true};
+        let mut lmk_recording: Arc<AtomicBool> = Arc::new(AtomicBool::new(false));
+    
         let _grabber = task::spawn_blocking(move || {
             let keys_pressed: Arc<RwLock<Vec<rdev::Key>>> = Arc::new(RwLock::new(vec![]));
             let buttons_pressed: Arc<RwLock<Vec<rdev::Button>>> = Arc::new(RwLock::new(vec![]));
@@ -448,6 +456,16 @@ impl MacroBackend {
                                     .map(|x| *SCANCODE_TO_HID.get(x).unwrap_or(&0))
                                     .collect()
                             };
+
+                            if keys_pressed.blocking_read().iter().any(|x|*x==lmk && *x==recording_modifier) {
+                                debug!("LMK AND RECORDING MODIFIER PRESSED, STARTING RECORDING");
+                                lmk_recording.store(true, Ordering::Relaxed); //"syntactic sugar"
+                        
+                            }
+                            if lmk_recording.load(Ordering::Relaxed) == true {
+                                //record
+                            }                            
+            
 
                             debug!(
                                 "Pressed Keys CONVERTED TO HID:  {:?}",
